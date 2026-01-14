@@ -1,0 +1,42 @@
+rollback_strategies:
+  file_write:
+    trackable: true
+    strategy: restore_backup
+    backup_location: /home/damon/hades/storage/snapshots/files/
+  file_delete:
+    trackable: true
+    strategy: restore_backup
+    backup_location: /home/damon/hades/storage/snapshots/files/
+  docker_stop:
+    trackable: true
+    strategy: docker_start
+    rollback_template: "docker start {container}"
+  docker_rm:
+    trackable: false
+    strategy: warn_only
+    message: "Container removal cannot be automatically rolled back"
+  sql_insert:
+    trackable: true
+    strategy: sql_delete
+    rollback_template: "DELETE FROM {table} WHERE id = '{id}'"
+  sql_update:
+    trackable: true
+    strategy: sql_restore
+    requires_before_state: true
+  sql_delete:
+    trackable: true
+    strategy: sql_insert
+    requires_before_state: true
+  sql_drop:
+    trackable: false
+    strategy: warn_only
+    message: "DROP operations cannot be automatically rolled back"
+  service_restart:
+    trackable: true
+    strategy: none_needed
+    message: "Service restart is self-correcting"
+
+retention:
+  max_operations: 1000
+  max_age_hours: 72
+  snapshot_cleanup_hours: 24

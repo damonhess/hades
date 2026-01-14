@@ -1,0 +1,15 @@
+[Unit]
+Description=HADES API - Rollback Agent
+After=network.target atlas-api.service
+
+[Service]
+Type=simple
+User=damon
+WorkingDirectory=/home/damon/hades
+ExecStart=/usr/bin/python3 /home/damon/hades/api.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
