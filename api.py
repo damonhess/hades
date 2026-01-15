@@ -75,6 +75,20 @@ async def health():
     return {"status": "healthy", "service": "hades-api"}
 
 
+@app.get("/metrics")
+async def metrics():
+    """Prometheus metrics endpoint"""
+    from fastapi.responses import PlainTextResponse
+    metrics_text = f"""# HELP hades_up HADES service status
+# TYPE hades_up gauge
+hades_up 1
+# HELP hades_initialized HADES initialization status
+# TYPE hades_initialized gauge
+hades_initialized {1 if hades_instance is not None else 0}
+"""
+    return PlainTextResponse(content=metrics_text, media_type="text/plain")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8008)
